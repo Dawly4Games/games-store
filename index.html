@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dawly 4 Games</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div class="hero">
+<h2>Dawly 4 Games</h2>
+<p>Made For Gamers ❤️</p>
+</div>
+
+<div class="top-bar">
+
+<input
+type="text"
+id="search"
+placeholder="🔍 ابحث عن لعبة..."
+>
+
+<button
+id="filterBtn"
+class="filter-btn"
+>
+☰ التصنيفات
+</button>
+
+</div>
+
+<div
+class="categories"
+id="categoriesMenu"
+>
+
+<button class="cat-btn active" data-category="">
+الكل
+</button>
+
+<button class="cat-btn" data-category="Action">Action</button>
+<button class="cat-btn" data-category="Souls">Souls</button>
+<button class="cat-btn" data-category="Co-op">Co-op</button>
+<button class="cat-btn" data-category="Adventure">Adventure</button>
+<button class="cat-btn" data-category="Open World">Open World</button>
+<button class="cat-btn" data-category="Shooter">Shooter</button>
+<button class="cat-btn" data-category="Sports">Sports</button>
+<button class="cat-btn" data-category="Racing">Racing</button>
+<button class="cat-btn" data-category="Horror">Horror</button>
+<button class="cat-btn" data-category="RPG">RPG</button>
+<button class="cat-btn" data-category="Strategy">Strategy</button>
+<button class="cat-btn" data-category="Simulation">Simulation</button>
+<button class="cat-btn" data-category="Fighting">Fighting</button>
+
+</div>
+
+<div class="cart-box">
+
+<h2 id="cartHeader" style="cursor:pointer;">
+🛍️ السلة
+(<span id="cartCount">0</span>)
+▼
+</h2>
+
+<div id="cartContent" style="display:none;">
+
+<div id="cartItems"></div>
+
+<h3>
+📦 إجمالي الحجم:
+<span id="totalSize">0 GB</span>
+</h3>
+
+<h3>
+💰 إجمالي السعر:
+<span id="totalPrice">0 جنيه</span>
+</h3>
+
+<button id="sendWhatsapp">
+إرسال الطلب عبر WhatsApp
+</button>
+
+</div>
+
+</div>
+
+<div id="status">
+جاري تحميل الألعاب...
+</div>
+
+<div id="games" class="games-container"></div>
+
+<button id="scrollTop" title="العودة للأعلى">
+↑
+</button>
+
+<footer>
+© 2025 Dawly 4 Games - Made For Gamers
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/app.js"></script>
+
+<script>
+
+const filterBtn =
+document.getElementById("filterBtn");
+
+const categoriesMenu =
+document.getElementById("categoriesMenu");
+
+filterBtn.addEventListener("click", () => {
+categoriesMenu.classList.toggle("show");
+});
+
+const scrollTopBtn =
+document.getElementById("scrollTop");
+
+scrollTopBtn.addEventListener("click", () => {
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+});
+
+window.addEventListener("scroll",()=>{
+
+if(window.scrollY > 400){
+
+scrollTopBtn.classList.add("show");
+
+}else{
+
+scrollTopBtn.classList.remove("show");
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

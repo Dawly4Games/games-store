@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Update Game Images</title>
+
+<style>
+body{
+font-family:Arial;
+padding:20px;
+background:#111;
+color:#fff;
+}
+
+#log{
+margin-top:20px;
+line-height:1.8;
+font-size:14px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>🎮 Updating Images...</h2>
+
+<div id="log"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const RAWG_KEY = "c71021bc462040b5a4c92f41a515869f";
+
+const supabaseUrl =
+"https://usucpguuzqcbevjawipa.supabase.co";
+
+const supabaseKey =
+"sb_publishable_BWeaxZ7ShIlpCQJ-EQPoVw_dpYz3iOL";
+
+const client =
+supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+const log =
+document.getElementById("log");
+
+async function run(){
+
+log.innerHTML += "<br>Loading games...";
+
+const { data: games, error } =
+await client
+.from("games")
+.select("id,name");
+
+if(error){
+
+log.innerHTML +=
+"<br>❌ " + error.message;
+
+return;
+
+}
+
+log.innerHTML +=
+"<br>✅ Found " +
+games.length +
+" games";
+
+for(const game of games){
+
+try{
+
+log.innerHTML +=
+"<br><br>🔍 Searching: " +
+game.name;
+
+const response =
+await fetch(
+`https://api.rawg.io/api/games?key=${RAWG_KEY}&search=${encodeURIComponent(game.name)}&page_size=1`
+);
+
+const result =
+await response.json();
+
+if(
+!result.results ||
+result.results.length === 0
+){
+
+log.innerHTML +=
+" ❌ NOT FOUND";
+
+continue;
+
+}
+
+const image =
+result.results[0].background_image;
+
+if(!image){
+
+log.innerHTML +=
+" ❌ NO IMAGE";
+
+continue;
+
+}
+
+console.log(
+"IMAGE FOUND:",
+game.name,
+image
+);
+
+const {
+data,
+error
+} =
+await client
+.from("games")
+.update({
+image_url: image
+})
+.eq("id", game.id)
+.select();
+
+if(error){
+
+console.error(
+"UPDATE ERROR:",
+error
+);
+
+log.innerHTML +=
+" ❌ UPDATE FAILED";
+
+continue;
+
+}
+
+console.log(
+"UPDATED:",
+game.name,
+image
+);
+
+log.innerHTML +=
+" ✅ SAVED";
+
+await new Promise(resolve =>
+setTimeout(resolve,500)
+);
+
+}catch(e){
+
+console.error(e);
+
+log.innerHTML +=
+" ❌ FAILED";
+
+}
+
+}
+
+log.innerHTML +=
+"<br><br><h2>🎉 FINISHED</h2>";
+
+}
+
+run();
+
+</script>
+
+</body>
+</html>

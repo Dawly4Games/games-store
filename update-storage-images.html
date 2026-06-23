@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Update Storage Images</title>
+</head>
+<body>
+
+<h2>Update Images From Storage</h2>
+<div id="log"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl =
+"https://usucpguuzqcbevjawipa.supabase.co";
+
+const supabaseKey =
+"sb_publishable_BWeaxZ7ShIlpCQJ-EQPoVw_dpYz3iOL";
+
+const client =
+supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+const BASE =
+"https://usucpguuzqcbevjawipa.supabase.co/storage/v1/object/public/games%20icon/";
+
+const images = {
+
+"Assassin's Creed": "asc.png",
+"Assassin's Creed Brotherhood": "asc brotherhood.png",
+"Assassin's Creed Chronicles": "asc chronicles.jpg",
+"Assassin's Creed Mirage": "asc mirage.jpg",
+"Assassin's Creed Odyssey": "asc odysey.png",
+"Assassin's Creed Origins": "asc origins.png",
+"Assassin's Creed Revelations": "asc rev.png",
+"Assassin's Creed Rogue": "asc rouge.png",
+"Assassin's Creed Syndicate": "asc syndicate.png",
+"Assassin's Creed Unity": "asc unity.jpg",
+"Assassin's Creed Valhalla": "asc valhalla.png",
+
+"Atomic Heart": "atomic heart.jpg",
+
+"Battlefield 1": "bf1.png",
+"Battlefield 3": "bf3.png",
+"Battlefield 4": "bf4.png",
+"Battlefield Hardline": "bf hardline.png",
+"Battlefield V": "bfv.png",
+"Battlefield 6": "bf 6.png",
+"Battlefield Bad Company 2": "bf2 bad company.png",
+
+"Call of Duty Black Ops 2": "cod black 2.jpg",
+"Call of Duty Black Ops 3": "cod black 3.jpg",
+"Call of Duty Black Ops 6": "cod black 6.jpg",
+
+"Crime Boss": "crime boss.png",
+
+"Death Stranding": "death stranding .jpg",
+"Death Stranding 2": "death stranding 2.jpg",
+
+"Deliver Us Mars": "deliver us.jpg",
+
+"Detroit Become Human": "detroit.png",
+
+"Directive 8020": "direvtive.png",
+
+"DiRT Rally 2.0": "dirt 2.0.png",
+
+"EA Sports FC 25": "fc 25.png",
+"EA Sports FC 26": "fc 26.png",
+
+"FIFA 14": "fifa 14.png",
+"FIFA 16": "fifa 16.png",
+"FIFA 17": "fifa 17.png",
+"FIFA 18": "fifa 18.png",
+"FIFA 19": "fifa 19.png",
+"FIFA 20": "fifa 20.png",
+"FIFA 21": "fifa 21.png",
+"FIFA 22": "fifa 22.jpg",
+"FIFA 23": "fifa 23.png",
+
+"Final Fantasy XVI": "final fantasy.png",
+
+"Forza Horizon 4": "forza 4.png",
+"Forza Horizon 5": "forza 5.png",
+"Forza Horizon 6": "forza 6.png",
+"Forza Motorsport": "forza motor.png",
+
+"God of War": "gow 18.png",
+"God of War Ragnarök": "gow ragn.png",
+
+"GTA IV": "gta iv.jpg",
+"GTA V": "gta v.webp",
+
+"Heavy Rain": "heavy rain.png",
+
+"Mafia Definitive Edition": "mafia 1.png",
+"Mafia II Definitive Edition": "mafia 2.png",
+"Mafia II Classic": "mafia 2 old.png",
+"Mafia III Definitive Edition": "mafia 3.png",
+"Mafia The Old Country": "mafia old.png",
+
+"Marvel's Avengers": "Marvels Avengers The Definitive Edition.jpg",
+
+"Need for Speed Heat": "nfs heat.png",
+"Need for Speed Hot Pursuit": "nfs hot.png",
+"Need for Speed Most Wanted": "nfs most.jpg",
+"Need for Speed Payback": "nfs paypak.png",
+"Need for Speed Rivals": "nfs rivals.png",
+"Need for Speed The Run": "nfs the run.png",
+
+"Pro Evolution Soccer 2013": "pes 13.png",
+"Pro Evolution Soccer 2016": "pes 16.png",
+"Pro Evolution Soccer 2017": "pes 17.jpg",
+"Pro Evolution Soccer 2018": "pes 18.jpg",
+"Pro Evolution Soccer 2019": "pes 19.jpg",
+"Pro Evolution Soccer 2020": "pes 20.jpg",
+"Pro Evolution Soccer 2021": "pes 21.png",
+
+"Pragmata": "pragmata.png",
+
+"Resident Evil 2": "re 2 remake.png",
+"Resident Evil 3": "re 3 remake.png",
+"Resident Evil 4": "re 4 remake.png",
+"Resident Evil 5": "re 5 gold.png",
+"Resident Evil 6": "re 6.png",
+"Resident Evil 7": "re 7.jpg",
+"Resident Evil Village": "re 8.png",
+"Resident Evil 9": "re 9.png",
+"Resident Evil HD Remaster": "re hd.png",
+"Resident Evil Revelations": "re rev.png",
+"Resident Evil Revelations 2": "re rev2.png",
+"Resident Evil Operation Raccoon City": "Resident Evil Operation.png",
+
+"Reanimal": "reanimal.png",
+
+"Red Dead Redemption": "red dead 1.jpg",
+"Red Dead Redemption 2": "red dead 2.png",
+
+"Rise of the Tomb Raider": "rise tomb.png",
+"Shadow of the Tomb Raider": "shadow tomb.png",
+
+"RoboCop Rogue City": "robocop.png",
+
+"Sniper Elite 3": "sniper elite 3.png",
+"Sniper Elite 4": "sniper elite 4.png",
+
+"Marvel's Spider-Man Remastered": "spider remaster.png",
+"Marvel's Spider-Man Miles Morales": "spider man miles.png",
+"Marvel's Spider-Man 2": "spider man 2.png",
+
+"Stellar Blade": "steller blade.png",
+
+"Uncharted Legacy of Thieves Collection": "uncharted legacy.jpg"
+
+};
+
+async function run(){
+
+const log =
+document.getElementById("log");
+
+for(const gameName in images){
+
+const imageUrl =
+BASE +
+encodeURIComponent(images[gameName]);
+
+const { error } =
+await client
+.from("games")
+.update({
+image_url: imageUrl
+})
+.eq("name", gameName);
+
+if(error){
+
+log.innerHTML +=
+`<p>❌ ${gameName}</p>`;
+
+}else{
+
+log.innerHTML +=
+`<p>✅ ${gameName}</p>`;
+
+}
+
+}
+
+log.innerHTML +=
+"<h2>FINISHED</h2>";
+
+}
+
+run();
+
+</script>
+
+</body>
+</html>
