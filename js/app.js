@@ -112,6 +112,8 @@ if (cache && cacheTime && (Date.now() - Number(cacheTime) < ONE_DAY)) {
 
 allGames.sort((a, b) => {
 
+    filteredGames = [...allGames];
+
     const seriesA = getSeriesName(a.name);
     const seriesB = getSeriesName(b.name);
 
@@ -366,13 +368,11 @@ return matchName && matchCategory;
 
 });
 
-displayedGames = filtered.slice(0, PAGE_SIZE);
+displayedGames = filteredGames.slice(0, PAGE_SIZE);
 
 currentPage = 1;
 
 renderGames(displayedGames);
-
-toggleLoadMore();
 
 }
 
@@ -472,25 +472,22 @@ const btn = document.getElementById("loadMoreBtn");
 if(!btn) return;
 
 btn.style.display =
-displayedGames.length < allGames.length
+displayedGames.length < filteredGames.length
 ? "inline-block"
 : "none";
 
 }
 
-function loadMoreGames(){
+function toggleLoadMore(){
 
-currentPage++;
+const btn = document.getElementById("loadMoreBtn");
 
-displayedGames =
-allGames.slice(
-0,
-currentPage * PAGE_SIZE
-);
+if(!btn) return;
 
-renderGames(displayedGames);
-
-toggleLoadMore();
+btn.style.display =
+displayedGames.length < filteredGames.length
+? "inline-block"
+: "none";
 
 }
 

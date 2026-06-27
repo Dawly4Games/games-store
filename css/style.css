@@ -162,12 +162,16 @@ left:100%;
 }
 
 .card img{
+.card img{
 width:100%;
 aspect-ratio:2/3;
+height:auto;
 object-fit:cover;
 display:block;
-background:#000;
-transition:.4s;
+background:#111827;
+transition:transform .3s;
+content-visibility:auto;
+contain-intrinsic-size:450px;
 }
 
 .card:hover img{
