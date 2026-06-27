@@ -93,6 +93,8 @@ status.innerHTML =
 
 return;
 }
+console.log(data);
+console.log(data.length);
 
 allGames = data.sort((a,b)=>{
 
