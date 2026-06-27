@@ -12,6 +12,7 @@ supabaseKey
 
 let allGames = [];
 let displayedGames = [];
+let filteredGames = [];
 let currentPage = 1;
 const PAGE_SIZE = 40;
 let currentCategory = "";
@@ -112,14 +113,15 @@ if (cache && cacheTime && (Date.now() - Number(cacheTime) < ONE_DAY)) {
 
 allGames.sort((a, b) => {
 
-    filteredGames = [...allGames];
-
+    
     const seriesA = getSeriesName(a.name);
     const seriesB = getSeriesName(b.name);
 
     const groupCompare = seriesA.localeCompare(seriesB, "en", {
         sensitivity: "base"
     });
+
+filteredGames = [...allGames];
 
     if (groupCompare !== 0) return groupCompare;
 
@@ -488,6 +490,22 @@ btn.style.display =
 displayedGames.length < filteredGames.length
 ? "inline-block"
 : "none";
+
+}
+
+function loadMoreGames(){
+
+currentPage++;
+
+displayedGames =
+filteredGames.slice(
+0,
+currentPage * PAGE_SIZE
+);
+
+renderGames(displayedGames);
+
+toggleLoadMore();
 
 }
 
