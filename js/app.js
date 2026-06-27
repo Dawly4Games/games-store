@@ -84,7 +84,7 @@ document.getElementById("status");
 const { data, error } =
 await client
 .from("games")
-.select("*");
+.select("id,name,image_url,price,size_gb,category");
 
 console.log(data);
 console.log(data.length);
@@ -97,8 +97,7 @@ status.innerHTML =
 
 return;
 }
-console.log(data);
-console.log(data.length);
+
 
 allGames = data.sort((a,b)=>{
 
@@ -162,10 +161,13 @@ container.innerHTML += `
 
 <img
 loading="lazy"
+decoding="async"
+fetchpriority="low"
 src="${
 game.image_url ||
 'https://via.placeholder.com/300x400?text=GAME'
-}">
+}"
+alt="${game.name}">
 
 <div class="info">
 
