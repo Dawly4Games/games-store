@@ -11,6 +11,9 @@ supabaseKey
 );
 
 let allGames = [];
+let displayedGames = [];
+let currentPage = 1;
+const PAGE_SIZE = 40;
 let currentCategory = "";
 
 let cart =
@@ -76,58 +79,61 @@ if(n.includes("zelda")) return "Zelda";
 return name;
 }
 
-async function loadGames(){
+async function loadGames() {
 
-const status =
-document.getElementById("status");
+const status = document.getElementById("status");
 
-const { data, error } =
-await client
-.from("games")
-.select("id,name,image_url,price,size_gb,category");
+const cache = localStorage.getItem("gamesCache");
+const cacheTime = localStorage.getItem("gamesCacheTime");
 
-console.log(data);
-console.log(data.length);
+const ONE_DAY = 24 * 60 * 60 * 1000;
 
+if (cache && cacheTime && (Date.now() - Number(cacheTime) < ONE_DAY)) {
 
-if(error){
+    allGames = JSON.parse(cache);
 
-status.innerHTML =
-"خطأ: " + error.message;
+} else {
 
-return;
+    const { data, error } = await client
+        .from("games")
+        .select("id,name,image_url,price,size_gb,category");
+
+    if (error) {
+        status.innerHTML = "خطأ: " + error.message;
+        return;
+    }
+
+    allGames = data;
+
+    localStorage.setItem("gamesCache", JSON.stringify(data));
+    localStorage.setItem("gamesCacheTime", Date.now());
+
 }
 
+allGames.sort((a, b) => {
 
-allGames = data.sort((a,b)=>{
+    const seriesA = getSeriesName(a.name);
+    const seriesB = getSeriesName(b.name);
 
-const seriesA =
-getSeriesName(a.name);
+    const groupCompare = seriesA.localeCompare(seriesB, "en", {
+        sensitivity: "base"
+    });
 
-const seriesB =
-getSeriesName(b.name);
+    if (groupCompare !== 0) return groupCompare;
 
-const groupCompare =
-seriesA.localeCompare(
-seriesB,
-"en",
-{ sensitivity:"base" }
-);
-
-if(groupCompare !== 0)
-return groupCompare;
-
-return a.name.localeCompare(
-b.name,
-"en",
-{ sensitivity:"base" }
-);
+    return a.name.localeCompare(b.name, "en", {
+        sensitivity: "base"
+    });
 
 });
 
 status.style.display = "none";
 
-renderGames(allGames);
+displayedGames = allGames.slice(0, PAGE_SIZE);
+
+renderGames(displayedGames);
+
+toggleLoadMore();
 renderCart();
 
 }
@@ -360,7 +366,13 @@ return matchName && matchCategory;
 
 });
 
-renderGames(filtered);
+displayedGames = filtered.slice(0, PAGE_SIZE);
+
+currentPage = 1;
+
+renderGames(displayedGames);
+
+toggleLoadMore();
 
 }
 
@@ -451,6 +463,46 @@ document.body.appendChild(toast);
 setTimeout(()=>{
 toast.remove();
 },2000);
+
+}
+function toggleLoadMore(){
+
+const btn = document.getElementById("loadMoreBtn");
+
+if(!btn) return;
+
+btn.style.display =
+displayedGames.length < allGames.length
+? "inline-block"
+: "none";
+
+}
+
+function loadMoreGames(){
+
+currentPage++;
+
+displayedGames =
+allGames.slice(
+0,
+currentPage * PAGE_SIZE
+);
+
+renderGames(displayedGames);
+
+toggleLoadMore();
+
+}
+
+const loadMoreBtn =
+document.getElementById("loadMoreBtn");
+
+if(loadMoreBtn){
+
+loadMoreBtn.addEventListener(
+"click",
+loadMoreGames
+);
 
 }
 loadGames();
