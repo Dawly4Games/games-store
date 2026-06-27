@@ -86,6 +86,10 @@ await client
 .from("games")
 .select("*");
 
+console.log(data);
+console.log(data.length);
+
+
 if(error){
 
 status.innerHTML =
