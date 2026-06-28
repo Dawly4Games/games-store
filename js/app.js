@@ -169,15 +169,7 @@ container.innerHTML += `
 
 <div class="card">
 
-<img
-loading="lazy"
-decoding="async"
-fetchpriority="low"
-src="${
-game.image_url ||
-'https://via.placeholder.com/300x400?text=GAME'
-}"
-alt="${game.name}">
+<div class="game-placeholder"></div>
 
 <div class="info">
 
