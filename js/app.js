@@ -362,7 +362,8 @@ return matchName && matchCategory;
 
 });
 
-displayedGames = filteredGames.slice(0, PAGE_SIZE);
+filteredGames = filtered;
+displayedGames = filtered.slice(0, PAGE_SIZE);
 
 currentPage = 1;
 
