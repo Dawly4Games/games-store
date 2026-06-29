@@ -1,8 +1,8 @@
 const supabaseUrl =
-"https://usucpguuzqcbevjawipa.supabase.co";
+"https://vkjpxjfueplvnabkpoxo.supabase.co";
 
 const supabaseKey =
-"sb_publishable_BWeaxZ7ShIlpCQJ-EQPoVw_dpYz3iOL";
+"sb_publishable_lJSGjESi-LvT3ON0FwKgcg_nsv6CE-U";
 
 const client =
 window.supabase.createClient(
@@ -11,6 +11,10 @@ supabaseKey
 );
 
 let allGames = [];
+let displayedGames = [];
+let filteredGames = [];
+let currentPage = 1;
+const PAGE_SIZE = 40;
 let currentCategory = "";
 
 let cart =
@@ -76,53 +80,64 @@ if(n.includes("zelda")) return "Zelda";
 return name;
 }
 
-async function loadGames(){
+async function loadGames() {
 
-const status =
-document.getElementById("status");
+const status = document.getElementById("status");
 
-const { data, error } =
-await client
-.from("games")
-.select("*");
+const cache = localStorage.getItem("gamesCache");
+const cacheTime = localStorage.getItem("gamesCacheTime");
 
-if(error){
+const ONE_DAY = 24 * 60 * 60 * 1000;
 
-status.innerHTML =
-"خطأ: " + error.message;
+if (cache && cacheTime && (Date.now() - Number(cacheTime) < ONE_DAY)) {
 
-return;
+    allGames = JSON.parse(cache);
+
+} else {
+
+    const { data, error } = await client
+        .from("games")
+        .select("id,name,image_url,price,size_gb,category");
+
+    if (error) {
+        status.innerHTML = "خطأ: " + error.message;
+        return;
+    }
+
+    allGames = data;
+
+    localStorage.setItem("gamesCache", JSON.stringify(data));
+    localStorage.setItem("gamesCacheTime", Date.now());
+
 }
 
-allGames = data.sort((a,b)=>{
+allGames.sort((a, b) => {
 
-const seriesA =
-getSeriesName(a.name);
+    
+    const seriesA = getSeriesName(a.name);
+    const seriesB = getSeriesName(b.name);
 
-const seriesB =
-getSeriesName(b.name);
+    const groupCompare = seriesA.localeCompare(seriesB, "en", {
+        sensitivity: "base"
+    });
 
-const groupCompare =
-seriesA.localeCompare(
-seriesB,
-"en",
-{ sensitivity:"base" }
-);
+filteredGames = [...allGames];
 
-if(groupCompare !== 0)
-return groupCompare;
+    if (groupCompare !== 0) return groupCompare;
 
-return a.name.localeCompare(
-b.name,
-"en",
-{ sensitivity:"base" }
-);
+    return a.name.localeCompare(b.name, "en", {
+        sensitivity: "base"
+    });
 
 });
 
 status.style.display = "none";
 
-renderGames(allGames);
+displayedGames = allGames.slice(0, PAGE_SIZE);
+
+renderGames(displayedGames);
+
+toggleLoadMore();
 renderCart();
 
 }
@@ -154,18 +169,13 @@ container.innerHTML += `
 
 <div class="card">
 
-<img
-loading="lazy"
-src="${
-game.image_url ||
-'https://via.placeholder.com/300x400?text=GAME'
-}">
+<div class="game-placeholder"></div>
 
 <div class="info">
 
 <h3>${game.name}</h3>
 
-<p>🎯 ${game.category || "Action"}</p>
+<p>🎯 ${game.category || "ٍ"}</p>
 
 <p>📦 ${game.size_gb || 0} GB</p>
 
@@ -352,7 +362,11 @@ return matchName && matchCategory;
 
 });
 
-renderGames(filtered);
+displayedGames = filteredGames.slice(0, PAGE_SIZE);
+
+currentPage = 1;
+
+renderGames(displayedGames);
 
 }
 
@@ -443,6 +457,59 @@ document.body.appendChild(toast);
 setTimeout(()=>{
 toast.remove();
 },2000);
+
+}
+function toggleLoadMore(){
+
+const btn = document.getElementById("loadMoreBtn");
+
+if(!btn) return;
+
+btn.style.display =
+displayedGames.length < filteredGames.length
+? "inline-block"
+: "none";
+
+}
+
+function toggleLoadMore(){
+
+const btn = document.getElementById("loadMoreBtn");
+
+if(!btn) return;
+
+btn.style.display =
+displayedGames.length < filteredGames.length
+? "inline-block"
+: "none";
+
+}
+
+function loadMoreGames(){
+
+currentPage++;
+
+displayedGames =
+filteredGames.slice(
+0,
+currentPage * PAGE_SIZE
+);
+
+renderGames(displayedGames);
+
+toggleLoadMore();
+
+}
+
+const loadMoreBtn =
+document.getElementById("loadMoreBtn");
+
+if(loadMoreBtn){
+
+loadMoreBtn.addEventListener(
+"click",
+loadMoreGames
+);
 
 }
 loadGames();

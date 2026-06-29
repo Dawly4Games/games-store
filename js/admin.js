@@ -1,8 +1,8 @@
 const supabaseUrl =
-"https://usucpguuzqcbevjawipa.supabase.co";
+"https://vkjpxjfueplvnabkpoxo.supabase.co";
 
 const supabaseKey =
-"sb_publishable_BWeaxZ7ShIlpCQJ-EQPoVw_dpYz3iOL";
+"sb_publishable_lJSGjESi-LvT3ON0FwKgcg_nsv6CE-U";
 
 const client =
 window.supabase.createClient(
