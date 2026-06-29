@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://jazzy-cassata-2af1ba.netlify.app/sitemap.xml

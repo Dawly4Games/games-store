@@ -95,12 +95,6 @@ id="categoriesMenu"
 
 <div id="games" class="games-container"></div>
 
-<div style="text-align:center;margin:30px 0;">
-    <button id="loadMoreBtn" class="filter-btn" style="display:none;">
-        🎮 تحميل المزيد
-    </button>
-</div>
-
 <button id="scrollTop" title="العودة للأعلى">
 ↑
 </button>
@@ -114,7 +108,17 @@ id="categoriesMenu"
 <script src="js/app.js"></script>
 
 <script>
-    
+
+const filterBtn =
+document.getElementById("filterBtn");
+
+const categoriesMenu =
+document.getElementById("categoriesMenu");
+
+filterBtn.addEventListener("click", () => {
+categoriesMenu.classList.toggle("show");
+});
+
 const scrollTopBtn =
 document.getElementById("scrollTop");
 
